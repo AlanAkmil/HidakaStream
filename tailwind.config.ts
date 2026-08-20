@@ -4,6 +4,15 @@ const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
+    "./lib/**/*.{ts,tsx}",
+  ],
+  safelist: [
+    "from-[#3A2B5E]", "to-[#1B1030]",
+    "from-[#1F3B4D]", "to-[#0E1B24]",
+    "from-[#4A2340]", "to-[#1A0E1A]",
+    "from-[#2B4A3E]", "to-[#0F1E18]",
+    "from-[#4A3320]", "to-[#1E140C]",
+    "from-[#2A2E4A]", "to-[#101124]",
   ],
   theme: {
     extend: {
