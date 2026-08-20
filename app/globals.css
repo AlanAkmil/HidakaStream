@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0a0c0b;
+  color: #e7e9de;
+}
+
+::selection {
+  background-color: #c8ff3d;
+  color: #0a0c0b;
+}
+
+*:focus-visible {
+  outline: 2px solid #c8ff3d;
+  outline-offset: 2px;
+}
