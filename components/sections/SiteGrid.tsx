@@ -1,5 +1,6 @@
 import { StreamSite } from "@/types";
 import { Card } from "@/components/ui/Card";
+import { ColorBars } from "@/components/ui/ColorBars";
 
 export function SiteGrid({
   sites,
@@ -20,7 +21,10 @@ export function SiteGrid({
     return (
       <div className="grid grid-cols-2 gap-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-32 animate-pulse rounded-xl bg-panel" />
+          <div
+            key={i}
+            className="h-36 animate-pulse rounded-lg border border-tapeLine bg-tape"
+          />
         ))}
       </div>
     );
@@ -28,29 +32,38 @@ export function SiteGrid({
 
   if (error) {
     return (
-      <div className="rounded-xl border border-alert/40 bg-panel p-6 font-mono text-sm text-alert">
-        SIGNAL LOST — {error}
+      <div className="overflow-hidden rounded-lg border border-staticRed/40 bg-tape">
+        <ColorBars animated height="h-1" />
+        <div className="p-5 font-mono text-xs text-staticRed">
+          SINYAL HILANG — {error}
+        </div>
       </div>
     );
   }
 
   if (sites.length === 0) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-6 font-mono text-sm text-static">
-        Nggak ada channel yang cocok. Coba kata kunci lain.
+      <div className="rounded-lg border border-dashed border-tapeLine p-8 text-center">
+        <p className="font-display text-2xl tracking-wide text-fog">
+          NO SIGNAL
+        </p>
+        <p className="mt-1 font-mono text-xs text-fog">
+          Nggak ada channel yang cocok. Coba kata kunci lain.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      {sites.map((site) => (
+      {sites.map((site, i) => (
         <Card
           key={site.url}
           site={site}
           favorited={favorites.includes(site.url)}
           onToggleFavorite={onToggleFavorite}
           onVisit={onVisit}
+          style={{ animationDelay: `${Math.min(i, 10) * 40}ms` }}
         />
       ))}
     </div>
