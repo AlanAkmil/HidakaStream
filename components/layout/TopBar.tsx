@@ -16,20 +16,20 @@ export function TopBar({
   refreshing,
 }: TopBarProps) {
   return (
-    <div className="flex items-center gap-3 px-4 pt-4">
+    <div className="flex items-center gap-2.5 px-4">
       <form
         onSubmit={(e) => {
           e.preventDefault();
           onSearch();
         }}
-        className="flex flex-1 items-center gap-2 rounded-full border border-line bg-panel px-4 py-2.5"
+        className="flex flex-1 items-center gap-2 rounded-md border border-tapeLine bg-tape px-3.5 py-2.5 transition-colors focus-within:border-phosphor/60"
       >
         <svg
-          width="16"
-          height="16"
+          width="15"
+          height="15"
           viewBox="0 0 24 24"
           fill="none"
-          className="shrink-0 text-static"
+          className="shrink-0 text-fog"
         >
           <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
           <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -38,24 +38,26 @@ export function TopBar({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder="Cari channel, contoh: sport..."
-          className="w-full truncate bg-transparent font-mono text-sm text-paper placeholder:text-static focus:outline-none"
+          className="w-full truncate bg-transparent font-mono text-sm text-paper placeholder:text-fog/70 focus:outline-none"
         />
-        <button
-          type="submit"
-          className="shrink-0 font-mono text-xs font-medium text-signal"
-        >
-          Cari
-        </button>
+        {query && (
+          <button
+            type="submit"
+            className="shrink-0 font-mono text-[11px] font-bold uppercase tracking-wide text-phosphor"
+          >
+            Cari
+          </button>
+        )}
       </form>
 
       <button
         onClick={onRefresh}
         aria-label="Muat ulang indeks"
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-signal text-void transition-transform active:scale-95"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-tapeLine bg-tape text-phosphor transition-all active:scale-90 hover:border-phosphor/60"
       >
         <svg
-          width="18"
-          height="18"
+          width="17"
+          height="17"
           viewBox="0 0 24 24"
           fill="none"
           className={refreshing ? "animate-spin" : ""}
