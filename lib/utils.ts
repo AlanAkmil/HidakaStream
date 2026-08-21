@@ -52,6 +52,10 @@ export function initials(name: string): string {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
+export function faviconUrl(domain: string, size = 128): string {
+  return `https://www.google.com/s2/favicons?sz=${size}&domain=${domain}`;
+}
+
 export async function copyToClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
