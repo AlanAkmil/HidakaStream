@@ -2,7 +2,7 @@
 
 import { useState, MouseEvent } from "react";
 import { StreamSite } from "@/types";
-import { accentFor, copyToClipboard } from "@/lib/utils";
+import { accentFor, copyToClipboard, gradientFor, initials } from "@/lib/utils";
 import { Badge } from "./Badge";
 
 export function Card({
@@ -34,7 +34,7 @@ export function Card({
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => onVisit(site.url)}
-      className="group relative flex h-32 flex-col justify-between rounded-xl border border-line bg-panel p-3.5 transition-colors hover:border-signal/60"
+      className="group relative flex h-36 flex-col justify-between rounded-xl border border-line bg-panel p-3.5 transition-colors hover:border-signal/60"
     >
       <div className="flex items-start justify-between">
         <div className="flex gap-1.5">
@@ -63,12 +63,21 @@ export function Card({
         </button>
       </div>
 
-      <h3
-        className="truncate font-display text-xl font-bold leading-tight"
-        style={{ color: accentFor(site.name) }}
-      >
-        {site.name}
-      </h3>
+      <div className="flex items-center gap-3">
+        <div
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br font-display text-xs text-paper ${gradientFor(
+            site.name
+          )}`}
+        >
+          {initials(site.name)}
+        </div>
+        <h3
+          className="min-w-0 truncate font-display text-lg font-bold leading-tight"
+          style={{ color: accentFor(site.name) }}
+        >
+          {site.name}
+        </h3>
+      </div>
 
       <div className="flex items-center justify-between">
         <span className="flex min-w-0 items-center gap-1 truncate font-mono text-[11px] text-static">
@@ -90,7 +99,13 @@ export function Card({
         >
           {copied ? (
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M5 13l4 4L19 7" stroke="#C8FF3D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M5 13l4 4L19 7"
+                stroke="#C8FF3D"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           ) : (
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
