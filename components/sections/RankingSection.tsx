@@ -2,6 +2,8 @@
 
 import { StreamSite } from "@/types";
 import { Card } from "@/components/ui/Card";
+import { useReveal } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 
 export function RankingSection({
   title,
@@ -20,21 +22,30 @@ export function RankingSection({
   onVisit: (url: string) => void;
   onSeeAll?: () => void;
 }) {
+  const { ref, visible } = useReveal<HTMLDivElement>();
+
   if (!loading && sites.length === 0) return null;
 
   return (
-    <div className="mt-8">
+    <div
+      ref={ref}
+      className={cn(
+        "mt-8 transition-all duration-500",
+        visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+      )}
+    >
       <div className="flex items-center justify-between px-4">
-        <h2 className="font-display text-lg font-semibold text-paper">
+        <h2 className="flex items-center gap-2 font-display text-xl tracking-wide text-paper">
+          <span className="h-3.5 w-1 rounded-full bg-phosphor" />
           {title}
-          <span className="ml-2 font-mono text-xs font-normal text-static">
+          <span className="font-mono text-xs font-normal normal-case text-fog">
             {sites.length}
           </span>
         </h2>
         {onSeeAll && (
           <button
             onClick={onSeeAll}
-            className="flex items-center gap-1 font-mono text-xs text-static"
+            className="flex items-center gap-1 font-mono text-xs text-fog transition-colors hover:text-phosphor"
           >
             Semua
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
@@ -50,23 +61,25 @@ export function RankingSection({
         )}
       </div>
 
-      <div className="mt-3 flex gap-3 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="no-scrollbar mt-3 flex gap-3 overflow-x-auto px-4 pb-1">
         {loading &&
           Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-32 w-48 shrink-0 animate-pulse rounded-xl bg-panel"
+              className="h-36 w-48 shrink-0 animate-pulse rounded-lg border border-tapeLine bg-tape"
             />
           ))}
 
         {!loading &&
-          sites.slice(0, 10).map((site) => (
+          visible &&
+          sites.slice(0, 10).map((site, i) => (
             <div key={site.url} className="w-48 shrink-0">
               <Card
                 site={site}
                 favorited={favorites.includes(site.url)}
                 onToggleFavorite={onToggleFavorite}
                 onVisit={onVisit}
+                style={{ animationDelay: `${Math.min(i, 6) * 60}ms` }}
               />
             </div>
           ))}
