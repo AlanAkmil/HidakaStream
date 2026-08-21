@@ -1,34 +1,10 @@
-import { SiteCategory, StreamSite } from "@/types";
-
 export function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
-const CATEGORY_KEYWORDS: Record<Exclude<SiteCategory, "General">, string[]> = {
-  Sports: ["sport", "live", "daddy", "stream", "match", "score"],
-  "Live TV": ["tv", "channel", "cast"],
-  Movies: ["movie", "film", "cinema", "flix"],
-  News: ["news", "berita"],
-};
-
-export function categorize(site: StreamSite): SiteCategory {
-  const haystack = `${site.name} ${site.url}`.toLowerCase();
-
-  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS) as [
-    Exclude<SiteCategory, "General">,
-    string[]
-  ][]) {
-    if (keywords.some((kw) => haystack.includes(kw))) {
-      return category;
-    }
-  }
-
-  return "General";
-}
-
 export function getDomain(url: string): string {
   try {
-    return new URL(url).hostname.replace(/^www\./, "");
+    return new URL(url).hostname;
   } catch {
     return url;
   }
@@ -43,12 +19,29 @@ const GRADIENTS = [
   "from-[#2A2E4A] to-[#101124]",
 ];
 
-export function gradientFor(name: string): string {
+const ACCENT_COLORS = [
+  "#FF5A7A",
+  "#4FD1FF",
+  "#B98CFF",
+  "#7DFFB0",
+  "#FFC24F",
+  "#FF9F5A",
+];
+
+function hashOf(name: string): number {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return GRADIENTS[Math.abs(hash) % GRADIENTS.length];
+  return Math.abs(hash);
+}
+
+export function gradientFor(name: string): string {
+  return GRADIENTS[hashOf(name) % GRADIENTS.length];
+}
+
+export function accentFor(name: string): string {
+  return ACCENT_COLORS[hashOf(name) % ACCENT_COLORS.length];
 }
 
 export function initials(name: string): string {
@@ -57,4 +50,62 @@ export function initials(name: string): string {
   const parts = clean.split(/\s+/);
   if (parts.length === 1) return clean.slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
+export async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// --- Favorit & riwayat kunjungan (localStorage, sisi klien saja) ---
+
+const FAVORITES_KEY = "hidakastream:favorites";
+const RECENTS_KEY = "hidakastream:recents";
+const RECENTS_LIMIT = 8;
+
+function readList(key: string): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeList(key: string, list: string[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(key, JSON.stringify(list));
+}
+
+export function getFavorites(): string[] {
+  return readList(FAVORITES_KEY);
+}
+
+export function toggleFavorite(url: string): string[] {
+  const current = readList(FAVORITES_KEY);
+  const next = current.includes(url)
+    ? current.filter((u) => u !== url)
+    : [...current, url];
+  writeList(FAVORITES_KEY, next);
+  return next;
+}
+
+export function getRecents(): string[] {
+  return readList(RECENTS_KEY);
+}
+
+export function pushRecent(url: string): string[] {
+  const current = readList(RECENTS_KEY).filter((u) => u !== url);
+  const next = [url, ...current].slice(0, RECENTS_LIMIT);
+  writeList(RECENTS_KEY, next);
+  return next;
+}
+
+export function clearRecents(): void {
+  writeList(RECENTS_KEY, []);
 }
