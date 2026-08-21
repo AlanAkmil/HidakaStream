@@ -16,14 +16,14 @@ export function SiteThumb({
 
   const dimensions = {
     sm: "h-9 w-9 rounded-md",
-    md: "h-11 w-11 rounded-lg",
-    lg: "h-14 w-14 rounded-xl",
+    md: "h-10 w-10 rounded-md",
+    lg: "h-14 w-14 rounded-lg",
   }[size];
 
   if (failed) {
     return (
       <div
-        className={`flex shrink-0 items-center justify-center bg-gradient-to-br font-display text-xs text-paper ${dimensions} ${gradientFor(
+        className={`flex shrink-0 items-center justify-center bg-gradient-to-br font-display text-sm tracking-wide text-paper ${dimensions} ${gradientFor(
           name
         )}`}
       >
@@ -34,7 +34,7 @@ export function SiteThumb({
 
   return (
     <div
-      className={`flex shrink-0 items-center justify-center overflow-hidden bg-void/40 p-1.5 ${dimensions}`}
+      className={`flex shrink-0 items-center justify-center overflow-hidden border border-tapeLine bg-ink/60 p-1.5 ${dimensions}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
