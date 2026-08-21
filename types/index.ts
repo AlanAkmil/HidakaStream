@@ -5,6 +5,7 @@ export interface StreamSite {
   category: SiteCategory;
   trusted: boolean;
   isNew?: boolean;
+  pinned?: boolean;
 }
 
 export interface ScrapeResponse {
