@@ -1,6 +1,7 @@
 import { StreamSite } from "@/types";
 import { lookupMeta } from "@/lib/siteMeta";
 import { getDomain } from "@/lib/utils";
+import { MANUAL_SITES } from "@/lib/manualSites";
 
 const SOURCE_URL = "https://tbcpl.lol/";
 
@@ -63,13 +64,19 @@ export async function getAllSites(forceRefresh = false): Promise<StreamSite[]> {
   }
 
   const html = await fetchHtml(SOURCE_URL);
-  const sites = parseSites(html);
+  const scraped = parseSites(html);
 
-  if (sites.length === 0) {
+  if (scraped.length === 0) {
     throw new Error(
       "Tidak ada data yang ditemukan. Struktur website tbcpl.lol mungkin telah berubah."
     );
   }
+
+  // Gabungin sama situs manual (LK21 dkk), dedup by domain — kalau
+  // domainnya udah ada di hasil scrape, versi scrape yang menang.
+  const scrapedDomains = new Set(scraped.map((s) => s.domain));
+  const manualOnly = MANUAL_SITES.filter((s) => !scrapedDomains.has(s.domain));
+  const sites = [...manualOnly, ...scraped];
 
   cache = { data: sites, fetchedAt: now };
   return sites;
