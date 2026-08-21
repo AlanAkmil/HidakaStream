@@ -1,7 +1,7 @@
 "use client";
 
 import { StreamSite } from "@/types";
-import { categorize, gradientFor, initials } from "@/lib/utils";
+import { gradientFor, initials } from "@/lib/utils";
 
 export function HeroBanner({
   featured,
@@ -26,10 +26,10 @@ export function HeroBanner({
       >
         <div className="flex items-start justify-between">
           <span className="rounded-full bg-signal/90 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wide text-void">
-            Sedang tayang
+            {featured.trusted ? "Trusted" : "Sedang tayang"}
           </span>
           <span className="font-mono text-[10px] uppercase tracking-widest text-paper/50">
-            {categorize(featured)}
+            {featured.category}
           </span>
         </div>
 
@@ -72,7 +72,7 @@ export function HeroBanner({
                   {site.name}
                 </p>
                 <p className="truncate font-mono text-[10px] text-static">
-                  {categorize(site)}
+                  {site.category}
                 </p>
               </div>
               <span className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-signal/15 text-signal">
