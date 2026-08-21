@@ -1,7 +1,8 @@
 "use client";
 
 import { StreamSite } from "@/types";
-import { gradientFor, initials } from "@/lib/utils";
+import { gradientFor } from "@/lib/utils";
+import { SiteThumb } from "@/components/ui/SiteThumb";
 
 export function HeroBanner({
   featured,
@@ -34,13 +35,16 @@ export function HeroBanner({
         </div>
 
         <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="truncate font-display text-2xl font-semibold text-paper drop-shadow-sm">
-              {featured.name}
-            </h2>
-            <p className="mt-1 font-mono text-xs text-paper/60">
-              Tap untuk nonton langsung
-            </p>
+          <div className="flex min-w-0 items-center gap-3">
+            <SiteThumb name={featured.name} domain={featured.domain} size="lg" />
+            <div className="min-w-0">
+              <h2 className="truncate font-display text-2xl font-semibold text-paper drop-shadow-sm">
+                {featured.name}
+              </h2>
+              <p className="mt-1 font-mono text-xs text-paper/60">
+                Tap untuk nonton langsung
+              </p>
+            </div>
           </div>
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-signal text-void">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -60,13 +64,7 @@ export function HeroBanner({
               rel="noopener noreferrer"
               className="flex items-center gap-2.5 rounded-xl border border-line bg-panel p-2.5"
             >
-              <div
-                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br font-display text-xs text-paper ${gradientFor(
-                  site.name
-                )}`}
-              >
-                {initials(site.name)}
-              </div>
+              <SiteThumb name={site.name} domain={site.domain} size="sm" />
               <div className="min-w-0">
                 <p className="truncate font-display text-[13px] text-paper">
                   {site.name}
