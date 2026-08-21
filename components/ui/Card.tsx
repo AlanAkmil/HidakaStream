@@ -2,8 +2,9 @@
 
 import { useState, MouseEvent } from "react";
 import { StreamSite } from "@/types";
-import { accentFor, copyToClipboard, gradientFor, initials } from "@/lib/utils";
+import { accentFor, copyToClipboard } from "@/lib/utils";
 import { Badge } from "./Badge";
+import { SiteThumb } from "./SiteThumb";
 
 export function Card({
   site,
@@ -64,13 +65,7 @@ export function Card({
       </div>
 
       <div className="flex items-center gap-3">
-        <div
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br font-display text-xs text-paper ${gradientFor(
-            site.name
-          )}`}
-        >
-          {initials(site.name)}
-        </div>
+        <SiteThumb name={site.name} domain={site.domain} size="md" />
         <h3
           className="min-w-0 truncate font-display text-lg font-bold leading-tight"
           style={{ color: accentFor(site.name) }}
