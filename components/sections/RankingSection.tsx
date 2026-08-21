@@ -1,31 +1,35 @@
 "use client";
 
 import { StreamSite } from "@/types";
-import { categorize, gradientFor, initials } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-
-const RANK_STYLE: Record<number, string> = {
-  1: "bg-rank1 text-void",
-  2: "bg-rank2 text-void",
-  3: "bg-rank3 text-void",
-};
+import { Card } from "@/components/ui/Card";
 
 export function RankingSection({
   title,
   sites,
   loading,
+  favorites,
+  onToggleFavorite,
+  onVisit,
   onSeeAll,
 }: {
   title: string;
   sites: StreamSite[];
   loading: boolean;
+  favorites: string[];
+  onToggleFavorite: (url: string) => void;
+  onVisit: (url: string) => void;
   onSeeAll?: () => void;
 }) {
+  if (!loading && sites.length === 0) return null;
+
   return (
     <div className="mt-8">
       <div className="flex items-center justify-between px-4">
         <h2 className="font-display text-lg font-semibold text-paper">
           {title}
+          <span className="ml-2 font-mono text-xs font-normal text-static">
+            {sites.length}
+          </span>
         </h2>
         {onSeeAll && (
           <button
@@ -51,49 +55,20 @@ export function RankingSection({
           Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="h-44 w-28 shrink-0 animate-pulse rounded-xl bg-panel"
+              className="h-32 w-48 shrink-0 animate-pulse rounded-xl bg-panel"
             />
           ))}
 
-        {!loading && sites.length === 0 && (
-          <p className="py-6 font-mono text-xs text-static">
-            Belum ada channel di kategori ini.
-          </p>
-        )}
-
         {!loading &&
-          sites.slice(0, 10).map((site, i) => (
-            <a
-              key={site.url}
-              href={site.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-28 shrink-0"
-            >
-              <div
-                className={`relative flex h-40 w-28 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br ${gradientFor(
-                  site.name
-                )}`}
-              >
-                <span
-                  className={cn(
-                    "absolute left-0 top-0 flex h-6 w-6 items-center justify-center rounded-br-lg font-display text-xs font-bold",
-                    RANK_STYLE[i + 1] ?? "bg-void/70 text-paper"
-                  )}
-                >
-                  {i + 1}
-                </span>
-                <span className="font-display text-2xl text-paper/90">
-                  {initials(site.name)}
-                </span>
-              </div>
-              <p className="mt-1.5 truncate font-mono text-[12px] text-paper">
-                {site.name}
-              </p>
-              <p className="truncate font-mono text-[10px] text-static">
-                {categorize(site)}
-              </p>
-            </a>
+          sites.slice(0, 10).map((site) => (
+            <div key={site.url} className="w-48 shrink-0">
+              <Card
+                site={site}
+                favorited={favorites.includes(site.url)}
+                onToggleFavorite={onToggleFavorite}
+                onVisit={onVisit}
+              />
+            </div>
           ))}
       </div>
     </div>
