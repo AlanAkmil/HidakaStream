@@ -61,6 +61,28 @@ const config: Config = {
           "0%, 100%": { boxShadow: "0 0 0px rgba(140,255,194,0)" },
           "50%": { boxShadow: "0 0 18px rgba(140,255,194,0.25)" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        popIn: {
+          "0%": { transform: "scale(1)" },
+          "40%": { transform: "scale(1.35)" },
+          "100%": { transform: "scale(1)" },
+        },
+        sweep: {
+          "0%": { transform: "translateY(-100%)", opacity: "0" },
+          "15%": { opacity: "1" },
+          "100%": { transform: "translateY(220%)", opacity: "0" },
+        },
+        breathe: {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "0.9" },
+        },
+        slideUpFade: {
+          "0%": { opacity: "0", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         flicker: "flicker 7s infinite",
@@ -68,6 +90,11 @@ const config: Config = {
         tuneIn: "tuneIn 0.6s ease-out both",
         staticPulse: "staticPulse 3s ease infinite",
         glow: "glow 3.5s ease-in-out infinite",
+        shimmer: "shimmer 1.8s ease-in-out infinite",
+        popIn: "popIn 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+        sweep: "sweep 5s ease-in-out infinite",
+        breathe: "breathe 4s ease-in-out infinite",
+        slideUpFade: "slideUpFade 0.35s cubic-bezier(0.16,1,0.3,1) both",
       },
     },
   },
