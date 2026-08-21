@@ -5,15 +5,15 @@ export function Badge({
   variant = "default",
 }: {
   children: React.ReactNode;
-  variant?: "default" | "signal" | "alert";
+  variant?: "default" | "phosphor" | "alert";
 }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-widest",
-        variant === "default" && "border-line text-static",
-        variant === "signal" && "border-signal text-signal",
-        variant === "alert" && "border-alert text-alert"
+        "inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider",
+        variant === "default" && "bg-tapeLine/60 text-fog",
+        variant === "phosphor" && "bg-phosphor text-ink",
+        variant === "alert" && "bg-staticRed text-ink"
       )}
     >
       {children}
