@@ -20,6 +20,7 @@ export function Card({
   style?: CSSProperties;
 }) {
   const [copied, setCopied] = useState(false);
+  const [justFavorited, setJustFavorited] = useState(false);
   const accent = accentFor(site.name);
 
   async function handleCopy(e: MouseEvent) {
@@ -29,6 +30,16 @@ export function Card({
     if (ok) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
+    }
+  }
+
+  function handleToggleFavorite(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    onToggleFavorite(site.url);
+    if (!favorited) {
+      setJustFavorited(true);
+      setTimeout(() => setJustFavorited(false), 350);
     }
   }
 
@@ -51,16 +62,15 @@ export function Card({
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-wrap gap-1">
             {site.trusted && <Badge variant="phosphor">Trusted</Badge>}
+            {site.pinned && <Badge variant="pinned">Pinned</Badge>}
             {site.isNew && <Badge variant="alert">New</Badge>}
           </div>
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onToggleFavorite(site.url);
-            }}
+            onClick={handleToggleFavorite}
             aria-label="Simpan favorit"
-            className="shrink-0 transition-transform active:scale-90"
+            className={`shrink-0 transition-transform active:scale-90 ${
+              justFavorited ? "animate-popIn" : ""
+            }`}
           >
             <svg
               width="16"
