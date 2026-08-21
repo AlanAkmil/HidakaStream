@@ -4,7 +4,7 @@ export function cn(...classes: Array<string | false | null | undefined>) {
 
 export function getDomain(url: string): string {
   try {
-    return new URL(url).hostname;
+    return new URL(url).hostname.replace(/^www\./, "");
   } catch {
     return url;
   }
