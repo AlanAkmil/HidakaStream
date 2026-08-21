@@ -5,7 +5,7 @@ export function Badge({
   variant = "default",
 }: {
   children: React.ReactNode;
-  variant?: "default" | "phosphor" | "alert";
+  variant?: "default" | "phosphor" | "alert" | "pinned";
 }) {
   return (
     <span
@@ -13,7 +13,8 @@ export function Badge({
         "inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider",
         variant === "default" && "bg-tapeLine/60 text-fog",
         variant === "phosphor" && "bg-phosphor text-ink",
-        variant === "alert" && "bg-staticRed text-ink"
+        variant === "alert" && "bg-staticRed text-ink",
+        variant === "pinned" && "bg-tapeAmber text-ink"
       )}
     >
       {children}
