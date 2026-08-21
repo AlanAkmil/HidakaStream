@@ -23,7 +23,7 @@ export function SiteGrid({
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-36 animate-pulse rounded-lg border border-tapeLine bg-tape"
+            className="h-36 animate-shimmer rounded-lg border border-tapeLine bg-[linear-gradient(110deg,#1A1620_25%,#241F2D_37%,#1A1620_63%)] bg-[length:200%_100%]"
           />
         ))}
       </div>
