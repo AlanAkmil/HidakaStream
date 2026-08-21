@@ -11,21 +11,23 @@ export function getDomain(url: string): string {
 }
 
 const GRADIENTS = [
-  "from-[#3A2B5E] to-[#1B1030]",
-  "from-[#1F3B4D] to-[#0E1B24]",
-  "from-[#4A2340] to-[#1A0E1A]",
-  "from-[#2B4A3E] to-[#0F1E18]",
-  "from-[#4A3320] to-[#1E140C]",
-  "from-[#2A2E4A] to-[#101124]",
+  "from-[#2B2140] to-[#120E1C]",
+  "from-[#153043] to-[#0B1620]",
+  "from-[#3A1F30] to-[#180D14]",
+  "from-[#1B3A2E] to-[#0C1811]",
+  "from-[#3A2A15] to-[#1A130A]",
+  "from-[#1F2440] to-[#0D0F1C]",
 ];
 
 const ACCENT_COLORS = [
-  "#FF5A7A",
-  "#4FD1FF",
-  "#B98CFF",
-  "#7DFFB0",
-  "#FFC24F",
-  "#FF9F5A",
+  "#FFC15C",
+  "#4FA8FF",
+  "#FF5C5C",
+  "#8CFFC2",
+  "#C77DFF",
+  "#5CD6C0",
+  "#FF8C5C",
+  "#B0C77D",
 ];
 
 function hashOf(name: string): number {
