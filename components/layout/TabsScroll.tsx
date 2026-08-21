@@ -14,16 +14,16 @@ export function TabsScroll<T extends string>({
   labels?: Partial<Record<T, string>>;
 }) {
   return (
-    <div className="scrollbar-none flex gap-5 overflow-x-auto px-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="no-scrollbar flex gap-2 overflow-x-auto px-4">
       {items.map((item) => (
         <button
           key={item}
           onClick={() => onChange(item)}
           className={cn(
-            "shrink-0 whitespace-nowrap pb-2 font-display text-[15px] transition-colors",
+            "shrink-0 whitespace-nowrap rounded-md border px-3 py-1.5 font-mono text-xs font-semibold uppercase tracking-wide transition-all active:scale-95",
             active === item
-              ? "border-b-2 border-signal font-semibold text-paper"
-              : "text-static"
+              ? "border-phosphor bg-phosphor/10 text-phosphor"
+              : "border-tapeLine bg-tape text-fog hover:border-fog"
           )}
         >
           {labels?.[item] ?? item}
