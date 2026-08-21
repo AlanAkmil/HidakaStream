@@ -11,12 +11,14 @@ export async function GET(req: NextRequest) {
 
   try {
     const { all, results } = await searchSites(query, refresh);
+    const categoryCount = new Set(all.map((s) => s.category)).size;
 
     const payload: ScrapeResponse = {
       success: true,
       query,
       total_sites_indexed: all.length,
       total_found: results.length,
+      categories: categoryCount,
       results,
     };
 
@@ -27,6 +29,7 @@ export async function GET(req: NextRequest) {
       query,
       total_sites_indexed: 0,
       total_found: 0,
+      categories: 0,
       results: [],
       error: error?.message ?? "Terjadi kesalahan tak terduga.",
     };
