@@ -24,12 +24,13 @@ export function HeroBanner({
         href={featured.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`group relative flex h-60 animate-tuneIn flex-col justify-between overflow-hidden rounded-lg border border-tapeLine bg-gradient-to-br p-4 transition-shadow duration-300 hover:animate-glow ${gradientFor(
+        className={`group relative flex h-60 animate-tuneIn flex-col justify-between overflow-hidden rounded-lg border border-tapeLine bg-gradient-to-br p-4 shadow-[0_0_0px_rgba(140,255,194,0)] transition-shadow duration-500 hover:shadow-[0_0_24px_-4px_rgba(140,255,194,0.35)] ${gradientFor(
           featured.name
         )}`}
       >
         <div className="pointer-events-none absolute inset-0 bg-scan opacity-60" />
         <div className="pointer-events-none absolute inset-0 bg-noise" />
+        <div className="pointer-events-none absolute inset-x-0 h-16 bg-gradient-to-b from-phosphor/10 via-phosphor/0 to-transparent animate-sweep" />
 
         <div className="relative z-10 flex items-start justify-between">
           <span className="flex items-center gap-1.5 rounded-sm bg-phosphor px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-ink">
@@ -53,7 +54,7 @@ export function HeroBanner({
               </p>
             </div>
           </div>
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-phosphor text-ink transition-transform group-hover:scale-110">
+          <span className="flex h-11 w-11 shrink-0 animate-breathe items-center justify-center rounded-full bg-phosphor text-ink transition-transform group-hover:scale-110">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M8 5v14l11-7z" />
             </svg>
