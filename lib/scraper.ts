@@ -1,4 +1,6 @@
 import { StreamSite } from "@/types";
+import { lookupMeta } from "@/lib/siteMeta";
+import { getDomain } from "@/lib/utils";
 
 const SOURCE_URL = "https://tbcpl.lol/";
 
@@ -15,7 +17,6 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 menit
 async function fetchHtml(url: string): Promise<string> {
   const res = await fetch(url, {
     headers: { "User-Agent": UA },
-    // jangan biarkan Next.js cache request ini selamanya
     cache: "no-store",
   });
 
@@ -28,17 +29,30 @@ async function fetchHtml(url: string): Promise<string> {
 
 function parseSites(html: string): StreamSite[] {
   const regex = new RegExp(ENTRY_REGEX);
-  const sites: StreamSite[] = [];
+  const raw: { name: string; url: string }[] = [];
   let match: RegExpExecArray | null;
 
   while ((match = regex.exec(html)) !== null) {
-    sites.push({ name: match[1], url: match[2] });
+    raw.push({ name: match[1], url: match[2] });
   }
 
   // Dedup berdasarkan URL
-  const uniqueMap = new Map<string, StreamSite>();
-  sites.forEach((site) => uniqueMap.set(site.url, site));
-  return Array.from(uniqueMap.values());
+  const uniqueMap = new Map<string, { name: string; url: string }>();
+  raw.forEach((site) => uniqueMap.set(site.url, site));
+
+  // Tempelin metadata asli (kategori, trusted, new) berdasarkan domain
+  return Array.from(uniqueMap.values()).map((site) => {
+    const domain = getDomain(site.url);
+    const meta = lookupMeta(domain);
+    return {
+      name: site.name,
+      url: site.url,
+      domain,
+      category: meta.category,
+      trusted: meta.trusted,
+      isNew: meta.isNew,
+    };
+  });
 }
 
 export async function getAllSites(forceRefresh = false): Promise<StreamSite[]> {
@@ -74,7 +88,9 @@ export async function searchSites(
 
   const results = all.filter(
     (site) =>
-      site.name.toLowerCase().includes(q) || site.url.toLowerCase().includes(q)
+      site.name.toLowerCase().includes(q) ||
+      site.url.toLowerCase().includes(q) ||
+      site.category.toLowerCase().includes(q)
   );
 
   return { all, results };
