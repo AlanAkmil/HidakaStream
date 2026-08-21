@@ -9,15 +9,22 @@ import { RankingSection } from "@/components/sections/RankingSection";
 import { SiteGrid } from "@/components/sections/SiteGrid";
 import { Footer } from "@/components/layout/Footer";
 import { ScrapeResponse, SiteCategory, StreamSite } from "@/types";
-import { categorize } from "@/lib/utils";
+import {
+  getFavorites,
+  getRecents,
+  pushRecent,
+  clearRecents,
+  toggleFavorite,
+} from "@/lib/utils";
 
 const MAIN_TABS: (SiteCategory | "All")[] = [
   "All",
-  "Sports",
-  "Live TV",
-  "Movies",
-  "News",
-  "General",
+  "Movies & Shows",
+  "Anime",
+  "Manga",
+  "Live TV & Sports",
+  "Paid",
+  "Apps",
 ];
 
 export default function Home() {
@@ -26,11 +33,19 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<SiteCategory | "All">("All");
   const [sites, setSites] = useState<StreamSite[]>([]);
   const [totalIndexed, setTotalIndexed] = useState(0);
+  const [totalCategories, setTotalCategories] = useState(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [recents, setRecents] = useState<string[]>([]);
 
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setFavorites(getFavorites());
+    setRecents(getRecents());
+  }, []);
 
   async function load(opts: { refresh?: boolean; q?: string } = {}) {
     const q = opts.q ?? submittedQuery;
@@ -50,6 +65,7 @@ export default function Home() {
       } else {
         setSites(data.results);
         setTotalIndexed(data.total_sites_indexed);
+        setTotalCategories(data.categories);
       }
     } catch (e: any) {
       setError(e?.message ?? "Gagal terhubung ke server.");
@@ -67,20 +83,40 @@ export default function Home() {
 
   const filteredSites = useMemo(() => {
     if (activeTab === "All") return sites;
-    return sites.filter((s) => categorize(s) === activeTab);
+    return sites.filter((s) => s.category === activeTab);
   }, [sites, activeTab]);
 
-  const sportsSites = useMemo(
-    () => sites.filter((s) => categorize(s) === "Sports"),
+  const movieSites = useMemo(
+    () => sites.filter((s) => s.category === "Movies & Shows"),
+    [sites]
+  );
+  const animeSites = useMemo(
+    () => sites.filter((s) => s.category === "Anime"),
     [sites]
   );
   const liveTvSites = useMemo(
-    () => sites.filter((s) => categorize(s) === "Live TV"),
+    () => sites.filter((s) => s.category === "Live TV & Sports"),
     [sites]
   );
 
-  const featured = sites[0] ?? null;
-  const promoted = sites.slice(1, 3);
+  const recentSites = useMemo(
+    () =>
+      recents
+        .map((url) => sites.find((s) => s.url === url))
+        .filter((s): s is StreamSite => Boolean(s)),
+    [recents, sites]
+  );
+
+  const featured = sites.find((s) => s.trusted) ?? sites[0] ?? null;
+  const promoted = sites.filter((s) => s.url !== featured?.url).slice(0, 2);
+
+  function handleToggleFavorite(url: string) {
+    setFavorites(toggleFavorite(url));
+  }
+
+  function handleVisit(url: string) {
+    setRecents(pushRecent(url));
+  }
 
   function jumpToResults(tab: SiteCategory | "All") {
     setActiveTab(tab);
@@ -106,6 +142,23 @@ export default function Home() {
         />
       </div>
 
+      {!loading && !error && totalIndexed > 0 && (
+        <div className="mt-3 grid grid-cols-2 gap-2 px-4">
+          <div className="rounded-xl border border-line bg-panel py-2.5 text-center">
+            <p className="font-display text-lg text-paper">{totalIndexed}</p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-static">
+              Sites
+            </p>
+          </div>
+          <div className="rounded-xl border border-line bg-panel py-2.5 text-center">
+            <p className="font-display text-lg text-paper">{totalCategories}</p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-static">
+              Categories
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="mt-4">
         <TabsScroll
           items={MAIN_TABS}
@@ -124,18 +177,67 @@ export default function Home() {
         </div>
       )}
 
+      {recentSites.length > 0 && (
+        <div className="mt-8 px-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-semibold text-paper">
+              Riwayat
+            </h2>
+            <button
+              onClick={() => {
+                clearRecents();
+                setRecents([]);
+              }}
+              className="font-mono text-xs text-static"
+            >
+              Hapus
+            </button>
+          </div>
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {recentSites.map((site) => (
+              <a
+                key={site.url}
+                href={site.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleVisit(site.url)}
+                className="shrink-0 rounded-full border border-line bg-panel px-3 py-1.5 font-mono text-xs text-paper"
+              >
+                {site.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       <RankingSection
-        title="Peringkat Sports"
-        sites={sportsSites}
+        title="Movies & Shows"
+        sites={movieSites}
         loading={loading}
-        onSeeAll={() => jumpToResults("Sports")}
+        favorites={favorites}
+        onToggleFavorite={handleToggleFavorite}
+        onVisit={handleVisit}
+        onSeeAll={() => jumpToResults("Movies & Shows")}
       />
 
       <RankingSection
-        title="Peringkat Live TV"
+        title="Anime"
+        sites={animeSites}
+        loading={loading}
+        favorites={favorites}
+        onToggleFavorite={handleToggleFavorite}
+        onVisit={handleVisit}
+        onSeeAll={() => jumpToResults("Anime")}
+      />
+
+      <RankingSection
+        title="Live TV & Sports"
         sites={liveTvSites}
         loading={loading}
-        onSeeAll={() => jumpToResults("Live TV")}
+        favorites={favorites}
+        onToggleFavorite={handleToggleFavorite}
+        onVisit={handleVisit}
+        onSeeAll={() => jumpToResults("Live TV & Sports")}
       />
 
       <div ref={resultsRef} className="mt-8 px-4">
@@ -145,12 +247,15 @@ export default function Home() {
             ({filteredSites.length})
           </span>
         </h2>
-        <SiteGrid sites={filteredSites} loading={loading} error={null} />
+        <SiteGrid
+          sites={filteredSites}
+          loading={loading}
+          error={null}
+          favorites={favorites}
+          onToggleFavorite={handleToggleFavorite}
+          onVisit={handleVisit}
+        />
       </div>
-
-      <p className="mt-8 px-4 font-mono text-[10px] text-static">
-        {totalIndexed > 0 && `${totalIndexed} channel terindeks dari tbcpl.lol`}
-      </p>
 
       <div className="mt-6">
         <Footer />
