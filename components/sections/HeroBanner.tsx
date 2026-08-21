@@ -3,6 +3,7 @@
 import { StreamSite } from "@/types";
 import { gradientFor } from "@/lib/utils";
 import { SiteThumb } from "@/components/ui/SiteThumb";
+import { ColorBars } from "@/components/ui/ColorBars";
 
 export function HeroBanner({
   featured,
@@ -12,7 +13,9 @@ export function HeroBanner({
   promoted: StreamSite[];
 }) {
   if (!featured) {
-    return <div className="mx-4 h-64 animate-pulse rounded-2xl bg-panel" />;
+    return (
+      <div className="mx-4 h-60 animate-pulse rounded-lg border border-tapeLine bg-tape" />
+    );
   }
 
   return (
@@ -21,60 +24,69 @@ export function HeroBanner({
         href={featured.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`relative flex h-64 flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br p-4 ${gradientFor(
+        className={`group relative flex h-60 animate-tuneIn flex-col justify-between overflow-hidden rounded-lg border border-tapeLine bg-gradient-to-br p-4 transition-shadow duration-300 hover:animate-glow ${gradientFor(
           featured.name
         )}`}
       >
-        <div className="flex items-start justify-between">
-          <span className="rounded-full bg-signal/90 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-wide text-void">
-            {featured.trusted ? "Trusted" : "Sedang tayang"}
+        <div className="pointer-events-none absolute inset-0 bg-scan opacity-60" />
+        <div className="pointer-events-none absolute inset-0 bg-noise" />
+
+        <div className="relative z-10 flex items-start justify-between">
+          <span className="flex items-center gap-1.5 rounded-sm bg-phosphor px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-ink">
+            <span className="h-1.5 w-1.5 animate-flicker rounded-full bg-staticRed" />
+            {featured.trusted ? "Trusted" : "On Air"}
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-widest text-paper/50">
+          <span className="rounded-sm bg-ink/50 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-paper/70">
             {featured.category}
           </span>
         </div>
 
-        <div className="flex items-end justify-between gap-3">
+        <div className="relative z-10 flex items-end justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <SiteThumb name={featured.name} domain={featured.domain} size="lg" />
             <div className="min-w-0">
-              <h2 className="truncate font-display text-2xl font-semibold text-paper drop-shadow-sm">
+              <h2 className="truncate font-display text-4xl leading-none tracking-wide text-paper drop-shadow-sm">
                 {featured.name}
               </h2>
-              <p className="mt-1 font-mono text-xs text-paper/60">
+              <p className="mt-1.5 font-mono text-[11px] text-paper/60">
                 Tap untuk nonton langsung
               </p>
             </div>
           </div>
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-signal text-void">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-phosphor text-ink transition-transform group-hover:scale-110">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M8 5v14l11-7z" />
             </svg>
           </span>
         </div>
+
+        <div className="absolute inset-x-0 bottom-0 z-10">
+          <ColorBars height="h-1" />
+        </div>
       </a>
 
       {promoted.length > 0 && (
         <div className="mt-3 grid grid-cols-2 gap-3">
-          {promoted.slice(0, 2).map((site) => (
+          {promoted.slice(0, 2).map((site, i) => (
             <a
               key={site.url}
               href={site.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2.5 rounded-xl border border-line bg-panel p-2.5"
+              style={{ animationDelay: `${i * 60}ms` }}
+              className="flex animate-riseIn items-center gap-2.5 rounded-md border border-tapeLine bg-tape p-2.5 transition-all active:scale-[0.98] hover:border-phosphor/50"
             >
               <SiteThumb name={site.name} domain={site.domain} size="sm" />
               <div className="min-w-0">
-                <p className="truncate font-display text-[13px] text-paper">
+                <p className="truncate font-display text-base tracking-wide text-paper">
                   {site.name}
                 </p>
-                <p className="truncate font-mono text-[10px] text-static">
+                <p className="truncate font-mono text-[10px] text-fog">
                   {site.category}
                 </p>
               </div>
-              <span className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-signal/15 text-signal">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <span className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-phosphor/15 text-phosphor">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </span>
