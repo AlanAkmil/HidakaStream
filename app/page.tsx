@@ -134,30 +134,37 @@ export default function Home() {
 
   function jumpToResults(tab: SiteCategory | "All") {
     setActiveTab(tab);
-    scrollTo(resultsRef);
+    scrollTo(tabsRef);
   }
+
+  const isFiltering = activeTab !== "All";
 
   return (
     <main className="min-h-screen bg-ink pb-24">
       <ColorBars height="h-1" />
 
-      <div ref={topRef} className="flex items-center gap-2 px-4 pb-3 pt-4">
+      <div ref={topRef} className="flex animate-riseIn items-center gap-2 px-4 pb-3 pt-4">
         <span className="h-2 w-2 animate-flicker rounded-full bg-phosphor" />
         <span className="font-display text-xl tracking-wide text-paper">
           HidakaStream
         </span>
       </div>
 
-      <TopBar
-        query={query}
-        onQueryChange={setQuery}
-        onSearch={() => setSubmittedQuery(query)}
-        onRefresh={() => load({ refresh: true, q: submittedQuery })}
-        refreshing={refreshing}
-      />
+      <div className="animate-riseIn" style={{ animationDelay: "60ms" }}>
+        <TopBar
+          query={query}
+          onQueryChange={setQuery}
+          onSearch={() => setSubmittedQuery(query)}
+          onRefresh={() => load({ refresh: true, q: submittedQuery })}
+          refreshing={refreshing}
+        />
+      </div>
 
       {!loading && !error && totalIndexed > 0 && (
-        <div className="mt-3 grid grid-cols-2 gap-2 px-4">
+        <div
+          className="mt-3 grid animate-riseIn grid-cols-2 gap-2 px-4"
+          style={{ animationDelay: "120ms" }}
+        >
           <div className="rounded-md border border-tapeLine bg-tape py-2.5 text-center">
             <p className="font-display text-xl text-paper">{totalIndexed}</p>
             <p className="font-mono text-[9px] uppercase tracking-widest text-fog">
@@ -173,7 +180,11 @@ export default function Home() {
         </div>
       )}
 
-      <div ref={tabsRef} className="mt-4">
+      <div
+        ref={tabsRef}
+        className="mt-4 animate-riseIn"
+        style={{ animationDelay: "180ms" }}
+      >
         <TabsScroll items={MAIN_TABS} active={activeTab} onChange={setActiveTab} />
       </div>
 
@@ -190,117 +201,150 @@ export default function Home() {
         </div>
       )}
 
-      <div ref={favoritesRef}>
-        {favoriteSites.length > 0 && (
-          <div className="mt-8 px-4">
+      {isFiltering ? (
+        <div key={activeTab} className="mt-8 animate-tuneIn px-4">
+          <div className="mb-3 flex items-center justify-between">
             <h2 className="flex items-center gap-2 font-display text-xl tracking-wide text-paper">
-              <span className="h-3.5 w-1 rounded-full bg-tapeAmber" />
-              Favorit
+              <span className="h-3.5 w-1 rounded-full bg-phosphor" />
+              {activeTab}
               <span className="font-mono text-xs font-normal normal-case text-fog">
-                {favoriteSites.length}
+                ({filteredSites.length})
               </span>
             </h2>
-            <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
-              {favoriteSites.map((site) => (
-                <a
-                  key={site.url}
-                  href={site.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => handleVisit(site.url)}
-                  className="shrink-0 rounded-md border border-tapeAmber/40 bg-tape px-3 py-1.5 font-mono text-xs text-paper transition-colors hover:border-tapeAmber"
-                >
-                  {site.name}
-                </a>
-              ))}
-            </div>
+            <button
+              onClick={() => setActiveTab("All")}
+              className="flex items-center gap-1 font-mono text-xs text-fog transition-colors hover:text-staticRed"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              Reset
+            </button>
           </div>
-        )}
-      </div>
-
-      <div ref={recentsRef}>
-        {recentSites.length > 0 && (
-          <div className="mt-8 px-4">
-            <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 font-display text-xl tracking-wide text-paper">
-                <span className="h-3.5 w-1 rounded-full bg-signalBlue" />
-                Riwayat
-              </h2>
-              <button
-                onClick={() => {
-                  clearRecents();
-                  setRecents([]);
-                }}
-                className="font-mono text-xs text-fog transition-colors hover:text-staticRed"
-              >
-                Hapus
-              </button>
-            </div>
-            <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
-              {recentSites.map((site) => (
-                <a
-                  key={site.url}
-                  href={site.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => handleVisit(site.url)}
-                  className="shrink-0 rounded-md border border-tapeLine bg-tape px-3 py-1.5 font-mono text-xs text-paper transition-colors hover:border-signalBlue/60"
-                >
-                  {site.name}
-                </a>
-              ))}
-            </div>
+          <SiteGrid
+            sites={filteredSites}
+            loading={loading}
+            error={null}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
+            onVisit={handleVisit}
+          />
+        </div>
+      ) : (
+        <>
+          <div ref={favoritesRef}>
+            {favoriteSites.length > 0 && (
+              <div className="mt-8 animate-slideUpFade px-4">
+                <h2 className="flex items-center gap-2 font-display text-xl tracking-wide text-paper">
+                  <span className="h-3.5 w-1 rounded-full bg-tapeAmber" />
+                  Favorit
+                  <span className="font-mono text-xs font-normal normal-case text-fog">
+                    {favoriteSites.length}
+                  </span>
+                </h2>
+                <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+                  {favoriteSites.map((site) => (
+                    <a
+                      key={site.url}
+                      href={site.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleVisit(site.url)}
+                      className="shrink-0 rounded-md border border-tapeAmber/40 bg-tape px-3 py-1.5 font-mono text-xs text-paper transition-all hover:-translate-y-0.5 hover:border-tapeAmber"
+                    >
+                      {site.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      <RankingSection
-        title="Movies & Shows"
-        sites={movieSites}
-        loading={loading}
-        favorites={favorites}
-        onToggleFavorite={handleToggleFavorite}
-        onVisit={handleVisit}
-        onSeeAll={() => jumpToResults("Movies & Shows")}
-      />
+          <div ref={recentsRef}>
+            {recentSites.length > 0 && (
+              <div className="mt-8 animate-slideUpFade px-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="flex items-center gap-2 font-display text-xl tracking-wide text-paper">
+                    <span className="h-3.5 w-1 rounded-full bg-signalBlue" />
+                    Riwayat
+                  </h2>
+                  <button
+                    onClick={() => {
+                      clearRecents();
+                      setRecents([]);
+                    }}
+                    className="font-mono text-xs text-fog transition-colors hover:text-staticRed"
+                  >
+                    Hapus
+                  </button>
+                </div>
+                <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+                  {recentSites.map((site) => (
+                    <a
+                      key={site.url}
+                      href={site.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => handleVisit(site.url)}
+                      className="shrink-0 rounded-md border border-tapeLine bg-tape px-3 py-1.5 font-mono text-xs text-paper transition-all hover:-translate-y-0.5 hover:border-signalBlue/60"
+                    >
+                      {site.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
-      <RankingSection
-        title="Anime"
-        sites={animeSites}
-        loading={loading}
-        favorites={favorites}
-        onToggleFavorite={handleToggleFavorite}
-        onVisit={handleVisit}
-        onSeeAll={() => jumpToResults("Anime")}
-      />
+          <RankingSection
+            title="Movies & Shows"
+            sites={movieSites}
+            loading={loading}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
+            onVisit={handleVisit}
+            onSeeAll={() => jumpToResults("Movies & Shows")}
+          />
 
-      <RankingSection
-        title="Live TV & Sports"
-        sites={liveTvSites}
-        loading={loading}
-        favorites={favorites}
-        onToggleFavorite={handleToggleFavorite}
-        onVisit={handleVisit}
-        onSeeAll={() => jumpToResults("Live TV & Sports")}
-      />
+          <RankingSection
+            title="Anime"
+            sites={animeSites}
+            loading={loading}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
+            onVisit={handleVisit}
+            onSeeAll={() => jumpToResults("Anime")}
+          />
 
-      <div ref={resultsRef} className="mt-8 px-4">
-        <h2 className="mb-3 flex items-center gap-2 font-display text-xl tracking-wide text-paper">
-          <span className="h-3.5 w-1 rounded-full bg-paper/40" />
-          {activeTab === "All" ? "Semua Channel" : activeTab}
-          <span className="font-mono text-xs font-normal normal-case text-fog">
-            ({filteredSites.length})
-          </span>
-        </h2>
-        <SiteGrid
-          sites={filteredSites}
-          loading={loading}
-          error={null}
-          favorites={favorites}
-          onToggleFavorite={handleToggleFavorite}
-          onVisit={handleVisit}
-        />
-      </div>
+          <RankingSection
+            title="Live TV & Sports"
+            sites={liveTvSites}
+            loading={loading}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
+            onVisit={handleVisit}
+            onSeeAll={() => jumpToResults("Live TV & Sports")}
+          />
+
+          <div ref={resultsRef} className="mt-8 px-4">
+            <h2 className="mb-3 flex items-center gap-2 font-display text-xl tracking-wide text-paper">
+              <span className="h-3.5 w-1 rounded-full bg-paper/40" />
+              Semua Channel
+              <span className="font-mono text-xs font-normal normal-case text-fog">
+                ({filteredSites.length})
+              </span>
+            </h2>
+            <SiteGrid
+              sites={filteredSites}
+              loading={loading}
+              error={null}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+              onVisit={handleVisit}
+            />
+          </div>
+        </>
+      )}
 
       <div className="mt-6">
         <Footer />
